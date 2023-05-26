@@ -1,0 +1,32 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(0)
+X = np.linspace(-10, 10, num=100)
+y = np.sin(X) + np.random.normal(0, 0.5, size=X.shape)
+
+def locally_weighted_linear_regression(X, y, x_test, tau):
+    m = X.shape[0]
+    X = np.concatenate([np.ones((m, 1)), X.reshape(m, 1)], axis=1)
+
+    y_pred = np.zeros_like(x_test)
+
+    for i, x in enumerate(x_test):
+        weights = np.exp(-(X[:, 1] - x) ** 2 / (2 * tau ** 2))
+        W = np.diag(weights)
+        theta = np.linalg.inv(X.T @ W @ X) @ (X.T @ W @ y)
+        y_pred[i] = theta[0] + theta[1] * x
+
+    return y_pred
+
+x_test = np.linspace(-10, 10, num=200)
+tau = 1.0
+y_pred = locally_weighted_linear_regression(X, y, x_test, tau)
+
+plt.scatter(X, y, label='Data Points')
+plt.plot(x_test, y_pred, color='red', label='Locally Weighted Linear Regression')
+plt.xlabel('X')
+plt.ylabel('y')
+plt.title('Locally Weighted Linear Regression')
+plt.legend()
+plt.show()

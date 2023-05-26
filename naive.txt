@@ -1,0 +1,26 @@
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+data = [
+	"I love this product!",
+	"This is the best movie I've ever seen.",
+	"The food at this restaurant is amazing.",
+	"This product is terrible.",
+	"I wouldn't recommend this movie to anyone.",
+	"The service at this restaurant is awful.",
+]
+
+labels = [1, 1, 1, 0, 0, 0]
+
+pipeline = Pipeline([
+	('vectorizer', CountVectorizer(stop_words='english')),
+	('classifier', MultinomialNB())
+])
+pipeline.fit(data, labels)
+
+new_data = ["this is the best hotel.", "My stay at this hotel was terrible."]
+predictions = pipeline.predict(new_data)
+
+pred = [bool(x) for x in predictions]
+print("Predicted labels:", pred)
